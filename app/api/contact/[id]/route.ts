@@ -2,17 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Contact from '@/lib/models/Contact';
 
-interface Params {
-  params: {
-    id: string;
-  };
-}
+// ✅ Remove the old Params interface and use Promise directly
 
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> } // ✅ Add Promise
+) {
   try {
     await connectDB();
 
-    const contact = await Contact.findById(params.id);
+    // ✅ Await params first
+    const { id } = await params;
+
+    const contact = await Contact.findById(id); // ✅ Use resolved id
 
     if (!contact) {
       return NextResponse.json(
@@ -31,14 +33,20 @@ export async function GET(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: Params) {
+export async function PUT(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> } // ✅ Add Promise
+) {
   try {
     await connectDB();
+
+    // ✅ Await params first
+    const { id } = await params;
 
     const body = await request.json();
     
     const contact = await Contact.findByIdAndUpdate(
-      params.id,
+      id, // ✅ Use resolved id
       body,
       { new: true, runValidators: true }
     );
@@ -72,11 +80,17 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: Params) {
+export async function DELETE(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> } // ✅ Add Promise
+) {
   try {
     await connectDB();
 
-    const contact = await Contact.findByIdAndDelete(params.id);
+    // ✅ Await params first
+    const { id } = await params;
+
+    const contact = await Contact.findByIdAndDelete(id); // ✅ Use resolved id
 
     if (!contact) {
       return NextResponse.json(
