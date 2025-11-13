@@ -1,17 +1,16 @@
 import nodemailer from 'nodemailer';
 
-// Create transporter with proper configuration
-//@ts-ignore
-const transporter = nodemailer.createTransporter({
+// ✅ CORRECT: Use createTransport (not createTransporter)
+const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER || "ah770643@gmail.com",
-    pass: process.env.EMAIL_PASSWORD || "tzhixkiirkcpahrq", // This is your App Password
+    pass: process.env.EMAIL_PASSWORD || "tzhixkiirkcpahrq",
   },
 });
 
 // Verify transporter configuration
-transporter.verify(function (error:any, success:any) {
+transporter.verify(function (error: any, success: any) {
   if (error) {
     console.error('Email transporter error:', error);
   } else {
